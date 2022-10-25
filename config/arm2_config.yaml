@@ -1,0 +1,65 @@
+# Hand-made
+test_robot:
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 50
+  base_joint_con:
+    type: effort_controllers/JointPositionController
+    joint: base_joint
+    pid: {p: 100.0,i: 0.01,d: 10.0}
+  y_joint_con:
+    type: effort_controllers/JointPositionController
+    joint: y_joint
+    pid: {p: 100.0,i: 0.01,d: 10.0}
+  uball_joint_con:
+    type: effort_controllers/JointPositionController
+    joint: uball_joint
+    pid: {p: 100.0,i: 0.01,d: 10.0}
+  x_joint_con:
+    type: effort_controllers/JointPositionController
+    joint: x_joint
+    pid: {p: 100.0,i: 0.01,d: 10.0}
+  mball_joint_con:
+    type: effort_controllers/JointPositionController
+    joint: mball_joint
+    pid: {p: 100.0,i: 0.01,d: 10.0}
+    wrist_joint_con:
+    type: effort_controllers/JointPositionController
+    joint: wrist_joint
+    pid: {p: 100.0,i: 0.01,d: 10.0}
+  hand_joint_con:
+    type: effort_controllers/JointPositionController
+    joint: hand_joint
+    pid: {p: 100.0,i: 0.01,d: 10.0}
+  f1_z_pris_con:
+    type: effort_controllers/JointPositionController
+    joint: f1_z_pris
+    pid: {p: 100.0,i: 0.01,d: 10.0}
+  f1_joint_con:
+    type: effort_controllers/JointPositionController
+    joint: f1_joint
+    pid: {p: 100.0,i: 0.01,d: 10.0}
+  f2_joint_con:
+    type: effort_controllers/JointPositionController
+    joint: f2_joint
+    pid: {p: 100.0,i: 0.01,d: 10.0}
+  f3_joint_con:
+    type: effort_controllers/JointPositionController
+    joint: f3_joint
+    pid: {p: 100.0,i: 0.01,d: 10.0}
+  f4_joint_con:
+    type: effort_controllers/JointPositionController
+    joint: f4_joint
+    pid: {p: 100.0,i: 0.01,d: 10.0}
+  f5_joint_con:
+    type: effort_controllers/JointPositionController
+    joint: f5_joint
+    pid: {p: 100.0,i: 0.01,d: 10.0}
+  f6_joint_con:
+    type: effort_controllers/JointPositionController
+    joint: f6_joint
+    pid: {p: 100.0,i: 0.01,d: 10.0}
+  fe_joint_con:
+    type: effort_controllers/JointPositionController
+    joint: fe_joint
+    pid: {p: 100.0,i: 0.01,d: 10.0}

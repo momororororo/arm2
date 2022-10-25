@@ -1,0 +1,523 @@
+<robot name="test_robot" xmlns:xacro="http://ros.org/wiki/xacro">
+        <xacro:property name="link_l" value="0.7"/>
+        <xacro:property name="link_r" value="0.07"/>
+        <link name="world"/>
+        <joint name="fix" type="fixed">
+          <parent link="world"/>
+          <child  link="base"/>
+        </joint>
+
+
+        <link name="base">
+          <visual>
+            <geometry>
+              <box size="1 1 0.1" />
+            </geometry>
+            <origin xyz="0 0 0.05" rpy="0 0 0"/>
+            <material name="white">
+              <color rgba="1 1 1 1"/>
+            </material>
+          </visual>
+          <collision>
+            <geometry>
+                <box size="1 1 0.1" />
+            </geometry>
+            <origin xyz="0 0 0.05" rpy="0 0 0"/>
+          </collision>
+          <inertial>
+            <mass value="1.6"/>
+            <origin xyz="0 0 ${link_l*0.}" rpy="0 0 0"/>
+            <inertia ixx="0.006051" iyy="0.002" izz="0.009098" ixy="0" ixz="0" iyz="0"/>
+          </inertial>
+        </link>
+
+        <link name="upperarm">
+          <visual>
+            <geometry>
+              <cylinder length="${link_l}" radius="${link_r*1.2}"/>
+            </geometry>
+            <origin xyz="0 0 ${link_l*0.5}" rpy="0 0 0"/>
+            <material name="gray">
+                <color rgba="0.8 0.8 0.8 0.5"/>
+            </material>
+          </visual>
+          <collision>
+            <geometry>
+                <cylinder length="${link_l-link_r}" radius="${link_r*1.2}"/>
+            </geometry>
+            <origin xyz="0 0 ${link_l*0.5}" rpy="0 0 0"/>
+          </collision>
+          <inertial>
+            <mass value="1.6"/>
+            <origin xyz="0 0 ${link_l*0.}" rpy="0 0 0"/>
+            <inertia ixx="0.006051" iyy="0.002" izz="0.009098" ixy="0" ixz="0" iyz="0"/>
+          </inertial>
+        </link>
+
+        <joint name="base_joint" type="continuous">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <axis xyz="0 0 1"/>
+            <parent link="base"/>
+            <child link="upperarm" />
+        </joint>
+        <transmission name="tranbj">
+          <type>transmission_interface/SimpleTransmission</type>
+          <joint name="base_joint">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+          </joint>
+          <actuator name="motorbj">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+          </actuator>
+        </transmission>
+
+        <link name="upperball">
+          <visual>
+            <geometry>
+              <sphere radius="${link_r*2}" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0. 0"/>
+            <material name="red">
+            <color rgba="1.0 0.0 0.0 1.0"/>
+          </material>
+          </visual>
+          <collision>
+            <geometry>
+                <sphere radius="${link_r*2}" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+          </collision>
+          <inertial>
+            <mass value="0.1"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0.001" iyy="0.001" izz="0.001" ixy="0" ixz="0" iyz="0"/>
+          </inertial>
+        </link>
+        <joint name="y_joint" type="continuous">
+            <origin xyz="0 0 ${link_l+link_r}" rpy="0 0 0"/>
+            <axis xyz="0 1 0"/>
+            <parent link="upperarm"/>
+            <child link="upperball"/>
+        </joint>
+        <transmission name="trany">
+          <type>transmission_interface/SimpleTransmission</type>
+          <joint name="y_joint">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+          </joint>
+          <actuator name="motory">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+          </actuator>
+        </transmission>
+
+        <link name="middlearm">
+          <visual>
+            <geometry>
+              <box size="${link_r*2} ${link_r*2} ${link_l}" />
+            </geometry>
+            <origin xyz="0 0 ${link_l*0.5}" rpy="0 0 0"/>
+            <material name="white">
+              <color rgba="1 1 1 1"/>
+            </material>
+          </visual>
+          <collision>
+            <geometry>
+                <box size="${link_r*2} ${link_r*2} ${link_l-2*link_r}" />
+            </geometry>
+            <origin xyz="0 0 ${link_l*0.5+link_r}" rpy="0 0 0"/>
+          </collision>
+          <inertial>
+            <mass value="1.6"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0.006051" iyy="0.002" izz="0.009098" ixy="0" ixz="0" iyz="0"/>
+          </inertial>
+        </link>
+
+        <joint name="uball_joint" type="continuous">
+            <origin xyz="0 0 ${link_r*1.414}" rpy="0 0 0"/>
+            <axis xyz="0 0 1"/>
+            <parent link="upperball"/>
+            <child link="middlearm"/>
+        </joint>
+        <transmission name="tranub">
+          <type>transmission_interface/SimpleTransmission</type>
+          <joint name="uball_joint">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+          </joint>
+          <actuator name="motorub">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+          </actuator>
+        </transmission>
+
+        <link name="middleball">
+          <visual>
+            <geometry>
+              <sphere radius="${link_r*2}" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0. 0"/>
+            <material name="red">
+            <color rgba="1.0 0.0 0.0 1.0"/>
+          </material>
+          </visual>
+          <collision>
+            <geometry>
+                <sphere radius="${link_r*2}" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+          </collision>
+          <inertial>
+            <mass value="0.1"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0.001" iyy="0.001" izz="0.001" ixy="0" ixz="0" iyz="0"/>
+          </inertial>
+        </link>
+
+        <joint name="x_joint" type="continuous">
+            <origin xyz="0 0 ${link_l+link_r}" rpy="0 0 0"/>
+            <axis xyz="1 0 0"/>
+            <parent link="middlearm"/>
+            <child link="middleball"/>
+        </joint>
+        <transmission name="tranx">
+          <type>transmission_interface/SimpleTransmission</type>
+          <joint name="x_joint">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+          </joint>
+          <actuator name="motorx">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+          </actuator>
+        </transmission>
+
+        <link name="lowerarm">
+          <visual>
+            <geometry>
+              <box size="${link_r*4} ${link_r} ${link_l}" />
+            </geometry>
+            <origin xyz="0 0 ${link_l*0.5}" rpy="0 0 0"/>
+            <material name="gray">
+                <color rgba="0.8 0.8 0.8 0.5"/>
+            </material>
+          </visual>
+          <collision>
+            <geometry>
+                <box size="${link_r*4} ${link_r} ${link_l-2*link_r}" />
+            </geometry>
+            <origin xyz="0 0 ${link_l*0.5+link_r}" rpy="0 0 0"/>
+          </collision>
+          <inertial>
+            <mass value="1.6"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0.006051" iyy="0.002" izz="0.009098" ixy="0" ixz="0" iyz="0"/>
+          </inertial>
+        </link>
+        
+        <joint name="mball_joint" type="continuous">
+            <origin xyz="0 0 ${link_r*1.414}" rpy="0 0 0"/>
+            <axis xyz="0 0 1"/>
+            <parent link="middleball"/>
+            <child link="lowerarm"/>
+        </joint>
+        <transmission name="tranmb">
+          <type>transmission_interface/SimpleTransmission</type>
+          <joint name="mball_joint">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+          </joint>
+          <actuator name="motormb">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+          </actuator>
+        </transmission>
+
+        <link name="wrist">
+          <visual>
+            <geometry>
+              <cylinder length="${link_r*0.5}" radius="${link_r*3}"/>
+            </geometry>
+            <origin xyz="0. 0. 0." rpy="0 1.57 0"/>
+            <material name="red">
+            <color rgba="1.0 0.0 0.0 1.0"/>
+          </material>
+          </visual>
+          <collision>
+            <geometry>
+              <cylinder length="${link_r*0.5}" radius="${link_r*3}"/>
+            </geometry>
+            <origin xyz="0. 0. 0." rpy="0 1.57 0"/>
+          </collision>
+          <inertial>
+            <mass value="0.6"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0.002051" iyy="0.001" izz="0.003098" ixy="0" ixz="0" iyz="0"/>
+          </inertial>
+        </link>
+        <joint name="wrist_joint" type="prismatic">
+            <origin xyz="0. 0. ${link_l+0.6*link_r}" rpy="0 0 0"/>
+            <axis xyz="1 0 0"/>
+            <parent link="lowerarm"/>
+            <child link="wrist"/>
+            <limit effort="100" lower="-${link_r*1.5}" upper="${link_r*1.5}" velocity="1.0" />
+        </joint>
+        <transmission name="tranwr">
+          <type>transmission_interface/SimpleTransmission</type>
+          <joint name="wrist_joint">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+          </joint>
+          <actuator name="motorwr">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+          </actuator>
+        </transmission>
+
+        <link name="hand">
+          <visual>
+            <geometry>
+              <box size="0.3 0.05 0.4" />
+            </geometry>
+            <origin xyz="0.05 0. 0.2" rpy="0 0 0"/>
+            <material name="blue">
+              <color rgba="0.0 0.0 1.0 1"/>
+            </material>
+          </visual>
+          <collision>
+            <geometry>
+              <box size="0.3 0.05 0.4" />
+            </geometry>
+            <origin xyz="0.05 0. 0.2" rpy="0 0 0"/>
+          </collision>
+          <inertial>
+            <mass value="0.6"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0.002051" iyy="0.001" izz="0.003098" ixy="0" ixz="0" iyz="0"/>
+          </inertial>
+        </link>
+
+        <joint name="hand_joint" type="continuous">
+            <origin xyz="0. 0. ${0.05}" rpy="0 0 0"/>
+            <axis xyz="1 0 0"/>
+            <parent link="wrist"/>
+            <child link="hand"/>
+        </joint>
+        <transmission name="tranhj">
+          <type>transmission_interface/SimpleTransmission</type>
+          <joint name="hand_joint">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+          </joint>
+          <actuator name="motorhj">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+          </actuator>
+        </transmission>
+        <link name="dummy_finger">
+          <visual>
+            <geometry>
+              <box size="0.01 0.01 0.2" />
+            </geometry>
+            <origin xyz="0.005 0.005 0.1" rpy="0 0 0"/>
+            <material name="green">
+              <color rgba="0.0 1.0 0.0 1"/>
+            </material>
+          </visual>
+          <collision>
+            <geometry>
+              <box size="0.01 0.01 0.2" />
+            </geometry>
+            <origin xyz="0. 0. 0.1" rpy="0 0 0"/>
+          </collision>
+          <inertial>
+            <mass value="0.0006"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0.00002051" iyy="0.00001" izz="0.00003098" ixy="0" ixz="0" iyz="0"/>
+          </inertial>
+        </link>
+        <!-- <link name="dummy_finger"/> -->
+        <joint name="f1_z_pris" type="prismatic">
+            <origin xyz="0.2 0.025 0.2" rpy="0 0 0"/>
+            <axis xyz="0 0 1"/>
+            <parent link="hand"/>
+            <child link="dummy_finger"/>
+            <limit effort="30" lower="-0.2" upper="0" velocity="30.0"/>
+        </joint>
+        <transmission name="tranf1zpj">
+          <type>transmission_interface/SimpleTransmission</type>
+          <joint name="f1_z_pris">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+          </joint>
+          <actuator name="motorf1zpj">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+          </actuator>
+        </transmission>
+        <link name="finger1">
+          <visual>
+            <geometry>
+              <box size="0.15 0.05 0.2" />
+            </geometry>
+            <origin xyz="-0.075 0.025 0.1" rpy="0 0 0"/>
+            <material name="blue"/>
+          </visual>
+          <collision>
+            <geometry>
+              <box size="0.15 0.05 0.2" />
+            </geometry>
+            <origin xyz="-0.075 0.025 0.1" rpy="0 0 0"/>
+          </collision>
+          <inertial>
+            <mass value="0.6"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0.002051" iyy="0.001" izz="0.003098" ixy="0" ixz="0" iyz="0"/>
+          </inertial>
+        </link>
+        <joint name="f1_joint" type="revolute">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <axis xyz="0 0 1"/>
+            <parent link="dummy_finger"/>
+            <child link="finger1"/>
+            <limit effort="30" lower="-3.14" upper="0" velocity="3.14"/>
+        </joint>
+
+        <transmission name="tranf1j">
+          <type>transmission_interface/SimpleTransmission</type>
+          <joint name="f1_joint">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+          </joint>
+          <actuator name="motorf1j">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+          </actuator>
+        </transmission>
+
+        <xacro:macro name ="finger" params="num color j_x j_z">
+          <link name="finger${num}">
+            <visual>
+              <geometry>
+                <box size="0.1 0.05 0.08" />
+              </geometry>
+              <origin xyz="-0.05 0.025 0.04" rpy="0 0 0"/>
+              <material name="${color}"/>
+            </visual>
+            <collision>
+              <geometry>
+                <box size="0.1 0.05 0.08" />
+              </geometry>
+              <origin xyz="-0.05 0.025 0.04" rpy="0 0 0"/>
+            </collision>
+            <inertial>
+              <mass value="0.1"/>
+              <origin xyz="0 0 0" rpy="0 0 0"/>
+              <inertia ixx="0.0002051" iyy="0.0001" izz="0.0003098" ixy="0" ixz="0" iyz="0"/>
+            </inertial>
+          </link>
+          <joint name="f${num}_joint" type="revolute">
+              <origin xyz="${j_x} -0.0 ${j_z}" rpy="0 0 0"/>
+              <axis xyz="1 0 0"/>
+              <parent link="finger${num-1}"/>
+              <child link="finger${num}"/>
+              <limit effort="30" lower="0" upper="3.14" velocity="3.14"/>
+          </joint>
+          <transmission name="tranf${num}j">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="f${num}_joint">
+              <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="motorf${num}j">
+              <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+              <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+          </transmission>
+        </xacro:macro>
+
+        <xacro:finger num="2" color="green" j_x="-0.05" j_z="0.2"/>
+        <xacro:finger num="3" color="blue" j_x="-0.0" j_z="0.08"/>
+        <xacro:finger num="4" color="green" j_x="-0." j_z="0.08"/>
+        <xacro:finger num="5" color="blue" j_x="-0." j_z="0.08"/>
+        <xacro:finger num="6" color="green" j_x="-0." j_z="0.08"/>
+
+        <link name="fingerend">
+          <visual>
+            <geometry>
+              <cylinder length="0.02" radius="0.03"/>
+            </geometry>
+            <origin xyz="0 0 0.01" rpy="0 0 0"/>
+            <material name="red"/>
+          </visual>
+          <collision>
+            <geometry>
+                <cylinder length="0.02" radius="0.03"/>
+            </geometry>
+            <origin xyz="0 0 0.01" rpy="0 0 0"/>
+          </collision>
+          <inertial>
+            <mass value="0.06"/>
+            <origin xyz="0 0 ${link_l*0.}" rpy="0 0 0"/>
+            <inertia ixx="0.0006051" iyy="0.0002" izz="0.0009098" ixy="0" ixz="0" iyz="0"/>
+          </inertial>
+        </link>
+
+        <joint name="fe_joint" type="continuous">
+            <origin xyz="-0.09 0.025 0.08" rpy="0 0 0"/>
+            <axis xyz="0 0 1"/>
+            <parent link="finger6"/>
+            <child link="fingerend" />
+        </joint>
+        <transmission name="tranfej">
+          <type>transmission_interface/SimpleTransmission</type>
+          <joint name="fe_joint">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+          </joint>
+          <actuator name="motorfej">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+          </actuator>
+        </transmission>
+        <link name="end_arm"/>
+        <joint name="end_arm_joint" type="fixed">
+            <origin xyz="-0.18 0.05 0.2" rpy="0 0 0"/>
+            <parent link="finger1"/>
+            <child link="end_arm"/>
+        </joint>
+        <link name="end_hand"/>
+        <joint name="end_hand_joint" type="fixed">
+            <origin xyz="0 0 0.02" rpy="0 0 0"/>
+            <parent link="fingerend"/>
+            <child link="end_hand"/>
+        </joint>
+
+
+        <gazebo>
+          <plugin name="joint_state_publisher" filename="libgazebo_ros_joint_state_publisher.so">
+          <jointName>base_joint,y_joint,uball_joint,x_joint,mball_joint,wrist_joint,hand_joint,f1_z_pris,f1_joint,f2_joint,f3_joint,f4_joint,f5_joint,f6_joint,fe_joint</jointName>
+          </plugin>
+        </gazebo>
+        <!-- <gazebo>
+          <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
+          <leftJoint>base_joint</leftJoint>
+          <rightJoint>y_joint</rightJoint>
+          <robotBaseFrame>upperarm</robotBaseFrame>
+          <wheelSeparation>0.236</wheelSeparation>
+          <wheelDiameter>0.17</wheelDiameter>
+          <publishWheelJointState>true</publishWheelJointState>
+          <legacyMode>false</legacyMode>
+          <commandTopic>cmd_vel</commandTopic>
+          <odometryTopic>odom</odometryTopic>
+          <odometryFrame>odom</odometryFrame>
+          <odometrySource>world</odometrySource>
+          <publishOdomTF>true</publishOdomTF>
+          <publishWheelTF>false</publishWheelTF>
+          <publishTf>true</publishTf>
+          <updateRate>30</updateRate>
+          <wheelAcceleration>1</wheelAcceleration>
+          <wheelTorque>10</wheelTorque>
+          <rosDebugLevel>na</rosDebugLevel>
+          </plugin>
+        </gazebo> -->
+        <gazebo>
+          <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+            <robotNamespace>/</robotNamespace>
+            <controlPeriod>0.001</controlPeriod>
+            <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+            <legacyModeNS>true</legacyModeNS>
+          </plugin>
+        </gazebo>
+</robot>

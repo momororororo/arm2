@@ -1,0 +1,20 @@
+<launch>
+  <!-- Start Gazebo with an empty world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+  <!-- Load the HajimeCart URDF model into the parameter server -->
+  <param name="robot_description" textfile="$(find arm2)/urdf/arm_kobuki.urdf" />
+  <!-- Spawn a HajimeCart in Gazebo, taking the description from the
+       parameter server -->
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"
+        args="-param robot_description -urdf -model test_robot" output="screen"/>
+  <!-- Convert /joint_states messages published by Gazebo to /tf messages,
+       e.g., for rviz-->
+  <node name="robot_state_publisher" pkg="robot_state_publisher"
+        type="robot_state_publisher" output="screen"/>
+</launch>
